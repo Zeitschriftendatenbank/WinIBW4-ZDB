@@ -52,6 +52,46 @@ TestRunner.add("zdb_getSubfield_basic", function() {
   TestRunner.assert(val9 && val9[0].indexOf('12345') !== -1, 'getSubfield 9 failed');
 });
 
+TestRunner.add("zdb_updateSubfield_data", function() {
+  var updated = ZDB.updateSubfieldData("4000 One$bTwo$bThree$cFour", 'b', 'Updated', 1, '$');
+  TestRunner.assertEqual(updated, "4000 One$bTwo$bUpdated$cFour", "second b subfield was not updated");
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E One$bTwo", 'a', 'Updated', 0, '$'),
+    "039E Updated$bTwo",
+    "first a subfield was not updated"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("One$aTwo$aThree", 'a', 'Updated', 1, '$'),
+    "One$aUpdated$aThree",
+    "second a subfield (first explicit) was not updated, no field tag"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E One$aTwo$aThree", 'a', 'Updated', 1, '$'),
+    "039E One$aUpdated$aThree",
+    "second a subfield (first explicit) was not updated"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E One$aTwo$aThree", 'a', 'Updated', 2, '$'),
+    "039E One$aTwo$aUpdated",
+    "third a subfield was not updated"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E $aOne$bTwo", 'a', 'Updated', 0, '$'),
+    "039E $aUpdated$bTwo",
+    "explicit first a subfield was not updated"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E $aOne$bTwo", 'b', 'Updated', 1, '$'),
+    false,
+    "missing subfield occurrence should not be added"
+  );
+  TestRunner.assertEqual(
+    ZDB.updateSubfieldData("039E $aOne$bTwo", 'x', 'Updated', 0, '$'),
+    false,
+    "missing subfield should not be added"
+  );
+});
+
 
 TestRunner.add('zdb_getZDB PPN 016569318', function () {
     var ok = TestRunner.runWithKennung('pica3://ibw0.dnb.de:1042', '6098', '\\ZOE idn 016569318', 'ZDB getZDB');

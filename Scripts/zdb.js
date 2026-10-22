@@ -61,7 +61,7 @@ ZDB.getZDB = function (idn) {
     idn = idn || false;
     if (idn) {
         var myWindowId = activeWindow.windowID;
-        MISC.wait('\\ZOE idn ' + idn, true);
+        activeWindow.command('\\ZOE idn ' + idn, true);
     }
 
     var strScreen = MISC.checkScreen(['8A', 'MT', 'IT'], 'getZDB');
@@ -82,7 +82,7 @@ ZDB.getZDB = function (idn) {
             ? activeWindow.title.findTag(cat['D'], 0, false, true, false)
             : activeWindow.findTagContent(cat['D'], 0, false);
     else
-        return (Notify.error('Unsupported format: ' + format), idn && activateWindow(myWindowId), false);
+        return (Notify.error('Unsupported format: ' + format), idn && activeWindow.activateWindow(myWindowId), false);
 
     if (idn) { activateWindow(myWindowId); }
 
@@ -273,8 +273,74 @@ ZDB.insertSubfield = function (field, subfield, content, pos, occ) {
     activeWindow.title.insertText(splitted.join('$'));
 }
 
+/**
+* Replaces the content of the pos-th occurrence of a subfield in a complete field line
+* (tag + content). The order of all subfields is preserved.
+*
+* @param {string} line the field line including the tag, e.g. "4000 Title$bSub", or only the content "Title$bSub"
+* @param {string} subfield the subfield code
+* @param {string} content the new content
+* @param {number} pos the occurrence of the subfield 0 ... x
+* @param {string} del the subfield delimiter
+* @return {string|boolean} the new field line or false if the subfield does not exist
+*/
+ZDB.updateSubfieldData = function (line, subfield, content, pos, del) {
+    // lineParts[1] = tag incl. trailing whitespace (empty if line has no tag), lineParts[2] = field content
+    var lineParts = /^(\d{3}[\dA-Z@]\s)?([\s\S]*)$/.exec(line),
+        splitted,
+        count = 0,
+        hasCode,
+        i;
+
+    del = del || '$';
+    lineParts[1] = lineParts[1] || '';
+
+    splitted = lineParts[2].split(del);
+    for (i = 0; i < splitted.length; i++) {
+        // The first part has no subfield code; it is an implicit subfield 'a'
+        hasCode = i > 0;
+        if (i === 0 && splitted[i] === '') continue;
+        if ((hasCode ? splitted[i].charAt(0) : 'a') !== subfield) continue;
+        if (count === pos) {
+            splitted[i] = (hasCode ? subfield : '') + content;
+            return lineParts[1] + splitted.join(del);
+        }
+        count++;
+    }
+    return false;
+}
+
+/**
+* Updates an existing subfield's content.
+*
+* Script must be in a title or edit window with a record loaded.
+*
+* @param {string} field the field tag
+* @param {string} subfieldTag the subfield tag
+* @param {string} newContent the new content of the subfield
+* @param {number} pos optional: the occurrence of the subfield 0 ... x
+* @param {number} occ optional: the occurrence of the field 0 ... x
+* @return {boolean} true if the subfield was updated, false if it was not found
+*/
+ZDB.updateSubfield = function (field, subfieldTag, newContent, pos, occ) {
+    MISC.checkScreen(['MT', 'IT', 'IE'], 'updateSubfield');
+    var line = '',
+        updatedData;
+
+    if (typeof pos === 'undefined') pos = 0;
+    if (typeof occ === 'undefined') occ = 0;
+    // findTag only selects the field (including its tag); the text is read from the selection
+    if (!activeWindow.title.findTag(field, occ, true, true, false)) return false;
+    line = activeWindow.title.selection.replace(/[\r\n]+$/, '');
+
+    updatedData = this.updateSubfieldData(line, subfieldTag, newContent, pos, ('P' == MISC.format()) ? ZDB.delimiter : '$');
+    if (updatedData === false) return false;
+    activeWindow.title.insertText(updatedData);
+    return true;
+}
+
 ZDB.checkScreen = function (options, header, message) {
-    MISC.checkScreen(options, header, message);
+    return MISC.checkScreen(options, header, message);
 }
 
 /**
