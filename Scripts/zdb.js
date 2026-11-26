@@ -6,17 +6,6 @@ var ZDB = {
 }
 
 /**
- * Replaces all occurrences in text using regex
- * @param {string} text - Text to process
- * @param {regex} re - Regular expression pattern
- * @param {string} val - Replacement value
- * @return {string} Text with replacements
- */
-ZDB.replAll = function (text, re, val) {
-    return text.replace(re, val);
-}
-
-/**
 * Retrieves ZDBID from the current view or edit mode
 * @param {string} idn optional
 * @return {string|boolean} ZDBID or false

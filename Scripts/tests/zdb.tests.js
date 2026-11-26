@@ -37,13 +37,6 @@ TestRunner.add("zdb_parseExpansion_no_match", function() {
   TestRunner.assert(hasProp === false, "should be empty object for no match");
 });
 
-TestRunner.add("zdb_replAll", function() {
-  var s = ZDB.replAll("aabbcc","/b/g","x");
-  // replAll expects a RegExp; mimic expected usage
-  var s2 = ZDB.replAll("aabbcc", /b/g, "x");
-  TestRunner.assert(s2 == "aaxxcc", "replAll failed");
-});
-
 TestRunner.add("zdb_getSubfield_basic", function() {
   var f = "039E $aOne$bn$912345";
   var val = ZDB.getSubfield(f, 'a');
