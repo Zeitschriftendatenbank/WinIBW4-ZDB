@@ -6,42 +6,6 @@ var ZDB = {
 }
 
 /**
- * Retrieves the first value from an array field
- * @param {array|string} arr - Array or key to access from _rec
- * @param {string} key - Field key to retrieve
- * @return {*} First value or null if not found
-
-ZDB.first = function (arr, key) {
-    if ('string' === typeof arr) {
-        arr = this._rec[arr];
-    }
-    return (arr && arr[0] && arr[0][key]) ? arr[0][key][0] : null;
-}
-*/
-
-/**
- * Checks if a field exists in an array
- * @param {array|string} arr - Array or key to access from _rec
- * @param {string} key - Field key to check
- * @return {boolean} True if field exists
- */
-ZDB.has = function (arr, key) {
-    if ('string' === typeof arr) {
-        arr = this._rec[arr];
-    }
-    return (arr && arr[0] && arr[0][key]);
-}
-
-/**
- * Pushes a value to array if value is truthy
- * @param {array} arr - Target array
- * @param {*} val - Value to push if truthy
- */
-ZDB.pushIf = function (arr, val) {
-    if (val) arr.push(val);
-}
-
-/**
  * Replaces all occurrences in text using regex
  * @param {string} text - Text to process
  * @param {regex} re - Regular expression pattern
