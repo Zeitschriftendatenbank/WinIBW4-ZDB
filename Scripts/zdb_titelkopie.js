@@ -20,7 +20,6 @@ function __zdbNormdatenKopie() {
 }
 
 function __zdbTiteldatenKopie() {
-
     ZDB._rec = ZDB.JSON();
 
     // Überschrift und IDN einfügeng
@@ -28,7 +27,7 @@ function __zdbTiteldatenKopie() {
     var idn = activeWindow.getVariable('P3GPP');
     activeWindow.command('show d', false);
     // Titelkopie auf zdb_titeldatenkopie.ttl setzen
-    activeWindow.titleCopyFile = '%APPDATA%\\OCLC\\WinIBW4\\ttlFiles_zdb\\zdb_titeldatenkopie.ttl';
+    activeWindow.titleCopyFile = getProfileString('prefs', 'titleCopyFile', '%APPDATA%\\OCLC\\WinIBW4\\ttlFiles_zdb\\zdb_titeldatenkopie.ttl');
     activeWindow.copyTitle();
     activeWindow.command('ein t', false);
     activeWindow.title.insertText(" *** Titeldatenkopie *** \n");
@@ -55,7 +54,7 @@ function __zdbTiteldatenKopie() {
     var codes0600;
     if ('' != (codes0600 = activeWindow.title.findTag('0600', 0, false, true, true))) {
         var _codes0600 = codes0600.split(';');
-        var _codes = ZDB.arrayDiff(_codes0600, ['ee', 'mg', 'nw', 'vt', 'ra', 'rb', 'ru', 'rg']);
+        var _codes = MISC.arrayDiff(_codes0600, ['ee', 'mg', 'nw', 'vt', 'ra', 'rb', 'ru', 'rg']);
         if (0 < _codes.length) {
             activeWindow.title.insertText(_codes.join(';'));
         }
@@ -122,7 +121,7 @@ function __zdbMediatype() {
 }
 
 function zdb_Datensatzkopie() {
-    if (false == ZDB.checkScreen(['8A'], 'Datensatzkopie')) return false;
+    if (false == MISC.checkScreen(['8A'], 'Datensatzkopie')) return false;
     //Persönliche Einstellung des Titelkopie-Pfades ermitteln
     var titlecopyfileStandard = getProfileString('prefs', 'titleCopyFile', '');
     if (activeWindow.materialCode.charAt(0) == 'T') {
@@ -215,7 +214,7 @@ function __zdbOnlineRessource(copyFile, showComment, add0600, digi) {
     add0600 = typeof add0600 !== 'undefined' ? add0600 : [];
     if (!add0600) { add0600 = []; }
     if (ZDB._rec['017A']) {
-        var _codes = ZDB.arrayDiff(ZDB._rec['017A'][0]['a'], ['es', 'ks', 'sf', 'sm', 'mg', 'mm', 'nw', 'ra', 'rb', 'rc', 'rg', 'ru', 'ee', 'vt']);
+        var _codes = MISC.arrayDiff(ZDB._rec['017A'][0]['a'], ['es', 'ks', 'sf', 'sm', 'mg', 'mm', 'nw', 'ra', 'rb', 'rc', 'rg', 'ru', 'ee', 'vt']);
         // join arrays
         _codes = _codes.concat(add0600);
 

@@ -1,36 +1,3 @@
-if (typeof Array.isArray !== 'function') {
-    Array.isArray = function (arr) {
-        return Object.prototype.toString.call(arr) === "[object Array]";
-    };
-}
-
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function (searchElement, fromIndex) {
-        var k;
-        if (this == null) {
-            throw new TypeError('"this" is null or not defined');
-        }
-        var o = Object(this);
-        var len = o.length >>> 0;
-        if (len === 0) {
-            return -1;
-        }
-        var n = fromIndex | 0;
-        if (n >= len) {
-            return -1;
-        }
-        k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-        while (k < len) {
-            if (k in o && o[k] === searchElement) {
-                return k;
-            }
-            k++;
-        }
-        return -1;
-    };
-}
-
-
 function zdb_AutomatischeSuchBox() {
     if (false == ZDB.checkScreen(['MT', 'IT', 'IE'], 'AutomatischeSuchBox')) return false;
     ZDB.anfangsfenster = activeWindow.windowID; // globale Variable, die vom Skript HoleIDN verwendet wird
@@ -114,7 +81,7 @@ function __zdbGetFileContent(o) {
 }
 
 function zdb_Erscheinungsverlauf() {
-    if (false === ZDB.checkScreen(['MT', 'IT', 'IE'], 'Erscheinungsverlauf')) return false;
+    if (false === MISC.checkScreen(['MT', 'IT', 'IE'], 'Erscheinungsverlauf')) return false;
     try {
         showDialog('ProfD\\Dialogs_zdb\\ZDB_dialogErscheinungsverlauf.html', 200, 200, 500, 400);
     } catch (error) {
@@ -123,13 +90,7 @@ function zdb_Erscheinungsverlauf() {
 }
 
 function __zdbGet4024() {
-    var strScreen = ZDB.checkScreen(['MT', 'IT'], '__zdbGet4024');
-    if (!strScreen) {
-        utility.sentDataToDialog(false);
-    } else {
-        var f4024 = activeWindow.title.findTag('4024', 0, false, true, false);
-        utility.sentDataToDialog(f4024);
-    }
+    utility.sentDataToDialog(activeWindow.title.findTag('4024', 0, false, true, false));
 }
 
 function __zdb_paste4024(o) {
